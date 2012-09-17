@@ -11,7 +11,11 @@ class TranslationKey < ActiveRecord::Base
   def self.translation(key, locale)
     return unless translation_key = find_by_key(key)
     return unless translation_text = translation_key.translations.find_by_locale(locale)
-    translation_text.text
+
+    text = translation_text.text
+
+    return text if text.nil?
+    return eval(text) if text.at(0) == "[" and text.at(-1) == "]"
   end
 
   def self.available_locales
